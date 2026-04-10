@@ -8,14 +8,14 @@ namespace FileStorageClient.S3Implementation
 {
 	internal class S3FileStorageClient : IDisposable, IFileStorageClient
 	{
-		private readonly AmazonS3Client _client;
+		private readonly IAmazonS3 _client;
 		private readonly string _bucketName;
 		
 		private bool _disposed;
 
-		public S3FileStorageClient(string url, string accessKey, string secret, string bucketName)
+		public S3FileStorageClient(IAmazonS3 client, string bucketName)
 		{
-			_client = new AmazonS3Client(url, accessKey, secret);
+			_client = client;
 			_bucketName = bucketName;
 		}
 		

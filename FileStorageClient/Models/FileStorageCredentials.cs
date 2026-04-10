@@ -1,4 +1,4 @@
-﻿namespace FileStorageClient
+﻿namespace FileStorageClient.Models
 {
 	public class FileStorageCredentials
 	{

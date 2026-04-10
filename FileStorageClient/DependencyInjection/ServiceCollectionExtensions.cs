@@ -15,9 +15,11 @@ namespace FileStorageClient.DependencyInjection
 				.Bind(configuration)
 				.ValidateDataAnnotations();
 
+			services.AddTransient<IS3ClientFactory, S3ClientFactory>();
 			services.AddScoped<IFileStorageClient>(sp =>
 			{
 				var options = sp.GetRequiredService<IOptions<FileStorageOptions>>().Value;
+				var factory = sp.GetRequiredService<IS3ClientFactory>();
 
 				return options.FileStorageType switch
 				{
@@ -25,13 +27,13 @@ namespace FileStorageClient.DependencyInjection
 						options.FileStorageUrl,
 						options.FileStorageUserName,
 						options.FileStoragePassword),
+					
 					FileStorageType.S3 => new S3FileStorageClient(
-						options.FileStorageUrl,
-						options.FileStorageUserName,
-						options.FileStoragePassword,
-						options.BucketName),
+							factory.CreateClient(),
+							options.BucketName),
+					
 					_ => throw new ArgumentOutOfRangeException(nameof(options.FileStorageType),
-						$"Неизвестный тип файлового хранилища {options.FileStorageType}.")
+						$"Unknown file storage type {options.FileStorageType}.")
 				};
 			});
 			
